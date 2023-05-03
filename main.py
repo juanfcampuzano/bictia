@@ -15,7 +15,7 @@ def post_ruta_educativa(role: str):
 
     url = "https://api.openai.com/v1/chat/completions"
 
-    prompt = f"""Imagina que eres un experto en curriculum designer. Dame un curriculum para aprender a ser """+role+""" con los temarios, ordenados por secciones y por subsecciones, agregando el tiempo aproximado de estudio para cada uno. Quiero la respuesta en formato json {'seccion1':{'subseccion1':{'tema1':'tiempo1}}} no acepto mas formatos"""
+    prompt = f"""Imagina que eres un experto en curriculum designer. Dame un curriculum para aprender a ser """+role+""" con los temarios, ordenados por secciones y por subsecciones, agregando el tiempo aproximado de estudio para cada uno. Quiero la respuesta en formato json {'seccion1':{'subseccion1':{'tema1':'tiempo1}}} no acepto mas formatos, si no me mandas el formato json mi app crashea"""
 
     data = {
 
