@@ -1,10 +1,19 @@
 from fastapi import FastAPI
 import requests
 import json
+from fastapi.middleware.cors import CORSMiddleware
 import re
 from youtubesearchpython import VideosSearch
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 @app.get("/{role}")
