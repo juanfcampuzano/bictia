@@ -13,6 +13,10 @@ from fastapi_amis_admin.admin.site import AdminSite
 from fastapi_amis_admin.admin.settings import Settings
 
 app = FastAPI()
+
+site = AdminSite(settings=Settings(database_url_async='sqlite+aiosqlite:///amisadmin.db'))
+scheduler = SchedulerAdmin.bind(site)
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -20,9 +24,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-site = AdminSite(settings=Settings(database_url_async='sqlite+aiosqlite:///amisadmin.db'))
-scheduler = SchedulerAdmin.bind(site)
 
 def save_to_local(obj, name):
     pkl.dump(obj, open('pkl-data/'+str(name)+'.pkl', 'wb'))

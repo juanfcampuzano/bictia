@@ -1,5 +1,5 @@
-aiosqlite
-fastapi_scheduler
+aiosqlite==0.18.0
+fastapi_scheduler==0.0.11
 bardapi
 boto3
 anyio==3.6.2
