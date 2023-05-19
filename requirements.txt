@@ -1,4 +1,6 @@
+fastapi_scheduler
 bardapi
+boto3
 anyio==3.6.2
 certifi==2022.12.7
 chardet==3.0.4

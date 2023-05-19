@@ -5,8 +5,18 @@ from fastapi.middleware.cors import CORSMiddleware
 import re
 from youtubesearchpython import VideosSearch
 from bardapi import Bard
+import pickle as pkl
+import os
+import boto3
+from fastapi_scheduler import SchedulerAdmin
+from fastapi_amis_admin.admin.site import AdminSite
+from fastapi_amis_admin.admin.settings import Settings
 
 app = FastAPI()
+
+site = AdminSite(settings=Settings(database_url_async='sqlite+aiosqlite:///amisadmin.db'))
+scheduler = SchedulerAdmin.bind(site)
+
 
 app.add_middleware(
     CORSMiddleware,
@@ -15,6 +25,55 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+def save_to_local(obj, name):
+    pkl.dump(obj, open('pkl-data/'+str(name)+'.pkl', 'wb'))
+
+def save_to_s3(obj, name):
+    print('SUBIENDO {} a s3'.format(name))
+    os.environ['AWS_ACCESS_KEY_ID'] = 'AKIAT36HIHLLWYBJ4VK6'
+    os.environ['AWS_SECRET_ACCESS_KEY'] = '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'
+    s3 = boto3.client('s3')
+    bucket = 'profile-matching-coally'  # Reemplaza con el nombre de tu bucket en S3
+    key = str(name)+'.pkl'  # Reemplaza con la ruta y nombre de archivo en S3
+    s3.put_object(Body=pkl.dumps(obj), Bucket=bucket, Key=key)
+    print('SUBIDO {} a s3'.format(name))
+
+def download_from_s3(name, path):
+    print('DESCARGANDO '+name +' DE S3')
+    s3 = boto3.client('s3',
+                  aws_access_key_id='AKIAT36HIHLLWYBJ4VK6',
+                  aws_secret_access_key='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')
+
+    # Descarga el archivo PKL de S3 y guárdalo localmente
+    nombre_archivo_local = str(path)+str(name)+'.pkl'
+    s3.download_file('profile-matching-coally', str(name)+'.pkl', nombre_archivo_local)
+    print('TERMINE DE DESCARGAR '+name +' DE S3')
+
+
+@app.post("/save_chatgpt_query")
+def save_chatgpt_query(id_user, role, answer):
+    tries = 0
+
+    while tries < 5:
+        try:
+            chatgpt_responses = pkl.load(open('pkl-data/chatgpt_responses.pkl', 'rb'))
+            temp_dict = {}
+            temp_dict['role']=role
+            temp_dict['response']=answer
+            chatgpt_responses[id_user] = temp_dict
+            save_to_local(chatgpt_responses, 'chatgpt_responses')
+            save_to_s3(chatgpt_responses, 'chatgpt_responses')
+        except:
+            continue
+
+    chatgpt_responses = {}
+    temp_dict = {}
+    temp_dict['role']=role
+    temp_dict['response']=answer
+    chatgpt_responses[id_user] = temp_dict
+    save_to_local(chatgpt_responses, 'chatgpt_responses')
+    save_to_s3(chatgpt_responses, 'chatgpt_responses')
 
 
 @app.get("/{role}")
@@ -92,3 +151,9 @@ def post_ruta_educativa(role: str):
 
             ruta_educativa.append(row)
     return ruta_educativa
+
+@app.on_event("startup")
+async def startup():
+    site.mount_app(app)
+    download_from_s3('chatgpt_responses','')
+    scheduler.start()
