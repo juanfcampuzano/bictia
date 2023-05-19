@@ -76,11 +76,11 @@ async def save_chatgpt_query(id_user, role, answer, background_tasks: Background
     save_to_local(chatgpt_responses, 'chatgpt_responses')
     save_to_s3(chatgpt_responses, 'chatgpt_responses')
 
-    background_tasks.add_task(nueva_ruta_educativa, role)
+    background_tasks.add_task(nueva_ruta_educativa, role, id_user)
 
     return {"message": "respuesta agregada correctamente"}
 
-def nueva_ruta_educativa(role: str):
+def nueva_ruta_educativa(role: str, id_user: str):
     role = role.replace('_', ' ')
 
     token = 'WwjjqNqGPs1ijNEKQHSEyLjwQDxgCEzLXhd113fhV5jWpHU0V9L0NTpQo8WP2dSbiHWamQ.'
@@ -152,7 +152,27 @@ def nueva_ruta_educativa(role: str):
                     row['url_video'] = [result['link']]
 
             ruta_educativa.append(row)
-    return ruta_educativa
+
+    tries = 0
+
+    while tries < 5:
+        try:
+            rutas_educativas = pkl.load(open('/app/pkl-data/rutas_educativas.pkl', 'rb'))
+            temp_dict = {}
+            temp_dict['ruta']=ruta_educativa
+            rutas_educativas[id_user] = temp_dict
+            save_to_local(rutas_educativas, 'rutas_educativas')
+            save_to_s3(rutas_educativas, 'rutas_educativas')
+        except:
+            tries += 1
+            continue
+
+    rutas_educativas = {}
+    temp_dict = {}
+    temp_dict['ruta']=ruta_educativa
+    rutas_educativas[id_user] = temp_dict
+    save_to_local(rutas_educativas, 'rutas_educativas')
+    save_to_s3(rutas_educativas, 'rutas_educativas')
 
 @app.get("/{role}")
 def post_ruta_educativa(role: str):
