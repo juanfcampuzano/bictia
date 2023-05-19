@@ -11,6 +11,7 @@ import boto3
 from fastapi_scheduler import SchedulerAdmin
 from fastapi_amis_admin.admin.site import AdminSite
 from fastapi_amis_admin.admin.settings import Settings
+from pydantic import BaseModel
 
 app = FastAPI()
 
@@ -24,6 +25,11 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+class ChatGPTRequest(BaseModel):
+    id_user: str
+    role: str
+    answer: str
 
 def save_to_local(obj, name):
     pkl.dump(obj, open('/app/pkl-data/'+str(name)+'.pkl', 'wb'))
@@ -51,10 +57,13 @@ def download_from_s3(name, path):
 
 
 @app.post("/save_chatgpt_query")
-async def save_chatgpt_query(id_user, role, answer, background_tasks: BackgroundTasks):
+async def save_chatgpt_query(request: ChatGPTRequest, background_tasks: BackgroundTasks):
+    
+    id_user = request.id_user
+    role = request.role
+    answer = request.answer
+
     tries = 0
-
-
     while tries < 5:
         try:
             chatgpt_responses = pkl.load(open('/app/pkl-data/chatgpt_responses.pkl', 'rb'))
