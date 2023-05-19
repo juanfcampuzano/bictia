@@ -54,6 +54,8 @@ def download_from_s3(name, path):
 def save_chatgpt_query(id_user, role, answer):
     tries = 0
 
+    print(os.listdir(os.path.join(os.getcwd(), 'app')))
+
     while tries < 5:
         try:
             chatgpt_responses = pkl.load(open('/app/pkl-data/chatgpt_responses.pkl', 'rb'))
