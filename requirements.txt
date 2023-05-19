@@ -1,3 +1,4 @@
+aiosqlite
 fastapi_scheduler
 bardapi
 boto3
