@@ -26,7 +26,7 @@ app.add_middleware(
 )
 
 def save_to_local(obj, name):
-    pkl.dump(obj, open('pkl-data/'+str(name)+'.pkl', 'wb'))
+    pkl.dump(obj, open('/app/pkl-data/'+str(name)+'.pkl', 'wb'))
 
 def save_to_s3(obj, name):
     print('SUBIENDO {} a s3'.format(name))
@@ -53,12 +53,10 @@ def download_from_s3(name, path):
 @app.post("/save_chatgpt_query")
 def save_chatgpt_query(id_user, role, answer):
     tries = 0
-    print(os.getcwd())
-    print([x[0] for x in os.walk(os.getcwd())])
 
     while tries < 5:
         try:
-            chatgpt_responses = pkl.load(open('pkl-data/chatgpt_responses.pkl', 'rb'))
+            chatgpt_responses = pkl.load(open('/app/pkl-data/chatgpt_responses.pkl', 'rb'))
             temp_dict = {}
             temp_dict['role']=role
             temp_dict['response']=answer
