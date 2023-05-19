@@ -53,6 +53,8 @@ def download_from_s3(name, path):
 @app.post("/save_chatgpt_query")
 def save_chatgpt_query(id_user, role, answer):
     tries = 0
+    print(os.getcwd())
+    print([x[0] for x in os.walk(os.getcwd())])
 
     while tries < 5:
         try:
