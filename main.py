@@ -54,7 +54,7 @@ def download_from_s3(name, path):
 def save_chatgpt_query(id_user, role, answer):
     tries = 0
 
-    print(os.listdir(os.path.join(os.getcwd(), 'app')))
+    print(os.listdir(os.getcwd()))
 
     while tries < 5:
         try:
