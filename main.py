@@ -64,6 +64,7 @@ async def save_chatgpt_query(id_user, role, answer, background_tasks: Background
             chatgpt_responses[id_user] = temp_dict
             save_to_local(chatgpt_responses, 'chatgpt_responses')
             save_to_s3(chatgpt_responses, 'chatgpt_responses')
+            break
         except:
             tries += 1
             continue
@@ -163,6 +164,7 @@ def nueva_ruta_educativa(role: str, id_user: str):
             rutas_educativas[id_user] = temp_dict
             save_to_local(rutas_educativas, 'rutas_educativas')
             save_to_s3(rutas_educativas, 'rutas_educativas')
+            break
         except:
             tries += 1
             continue
@@ -249,6 +251,20 @@ def post_ruta_educativa(role: str):
 
             ruta_educativa.append(row)
     return ruta_educativa
+
+@app.get("/ruta_educativa/{user_id}")
+def get_ruta_educativa(user_id: str):
+    tries = 0
+    while tries < 5:
+        try:
+            rutas_educativas = pkl.load(open('/app/pkl-data/rutas_educativas.pkl','rb'))
+            return rutas_educativas[user_id]
+            break
+        except:
+            tries += 1
+            continue
+
+    return{"message":"error"}
 
 @app.on_event("startup")
 async def startup():
