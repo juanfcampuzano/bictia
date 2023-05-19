@@ -64,6 +64,7 @@ def save_chatgpt_query(id_user, role, answer):
             save_to_local(chatgpt_responses, 'chatgpt_responses')
             save_to_s3(chatgpt_responses, 'chatgpt_responses')
         except:
+            tries += 1
             continue
 
     chatgpt_responses = {}
