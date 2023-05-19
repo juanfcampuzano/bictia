@@ -253,5 +253,6 @@ def post_ruta_educativa(role: str):
 @app.on_event("startup")
 async def startup():
     site.mount_app(app)
-    download_from_s3('chatgpt_responses','')
+    download_from_s3('chatgpt_responses','/app/pkl-data/')
+    download_from_s3('chatgpt_responses','/app/pkl-data/')
     scheduler.start()
