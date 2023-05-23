@@ -69,7 +69,7 @@ async def save_chatgpt_query(request: ChatGPTRequest, background_tasks: Backgrou
     tries = 0
     while tries < 5:
         try:
-            download_from_s3('chatgpt_responses')
+            download_from_s3('chatgpt_responses','/app/pkl-data/')
             chatgpt_responses = load_from_local('chatgpt_responses')
             temp_dict = {}
             temp_dict['role']=role
@@ -175,7 +175,7 @@ def nueva_ruta_educativa(role: str, id_user: str):
 
             while tries < 5:
                 try:
-                    download_from_s3('rutas_educativas')
+                    download_from_s3('rutas_educativas','/app/pkl-data/')
                     rutas_educativas = load_from_local('rutas_educativas')
                     temp_dict = {}
                     temp_dict['ruta']=ruta_educativa
