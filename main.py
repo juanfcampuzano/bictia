@@ -196,8 +196,9 @@ def nueva_ruta_educativa(role: str, id_user: str):
             # save_to_s3(rutas_educativas, 'rutas_educativas')
             # break
 
-        except:
+        except Exception as e:
             print('ERROR GENERANDO RUTA EDUCATIVA')
+            print(e)
             print('REINTENTANDO {}'.format(tries))
             tries +=1
             continue
