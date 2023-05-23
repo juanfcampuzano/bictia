@@ -44,6 +44,9 @@ def save_to_s3(obj, name):
     s3.put_object(Body=pkl.dumps(obj), Bucket=bucket, Key=key)
     print('SUBIDO {} a s3'.format(name))
 
+def load_from_local(name):
+    return pkl.load(open('/app/pkl-data/'+str(name)+'.pkl', 'rb'))
+
 def download_from_s3(name, path):
     print('DESCARGANDO '+name +' DE S3')
     s3 = boto3.client('s3',
@@ -66,7 +69,7 @@ async def save_chatgpt_query(request: ChatGPTRequest, background_tasks: Backgrou
     tries = 0
     while tries < 5:
         try:
-            chatgpt_responses = pkl.load(open('/app/pkl-data/chatgpt_responses.pkl', 'rb'))
+            chatgpt_responses = load_from_local('chatgpt_responses')
             temp_dict = {}
             temp_dict['role']=role
             temp_dict['response']=answer
@@ -74,7 +77,8 @@ async def save_chatgpt_query(request: ChatGPTRequest, background_tasks: Backgrou
             save_to_local(chatgpt_responses, 'chatgpt_responses')
             save_to_s3(chatgpt_responses, 'chatgpt_responses')
             break
-        except:
+        except Exception as e:
+            print(e)
             tries += 1
             continue
 
@@ -170,14 +174,15 @@ def nueva_ruta_educativa(role: str, id_user: str):
 
             while tries < 5:
                 try:
-                    rutas_educativas = pkl.load(open('/app/pkl-data/rutas_educativas.pkl', 'rb'))
+                    rutas_educativas = load_from_local('rutas_educativas')
                     temp_dict = {}
                     temp_dict['ruta']=ruta_educativa
                     rutas_educativas[id_user] = temp_dict
                     save_to_local(rutas_educativas, 'rutas_educativas')
                     save_to_s3(rutas_educativas, 'rutas_educativas')
                     break
-                except:
+                except Exception as e:
+                    print(e)
                     tries += 1
                     continue
 
