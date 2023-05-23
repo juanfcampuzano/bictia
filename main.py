@@ -69,6 +69,7 @@ async def save_chatgpt_query(request: ChatGPTRequest, background_tasks: Backgrou
     tries = 0
     while tries < 5:
         try:
+            download_from_s3('chatgpt_responses')
             chatgpt_responses = load_from_local('chatgpt_responses')
             temp_dict = {}
             temp_dict['role']=role
@@ -82,13 +83,13 @@ async def save_chatgpt_query(request: ChatGPTRequest, background_tasks: Backgrou
             tries += 1
             continue
 
-    chatgpt_responses = {}
-    temp_dict = {}
-    temp_dict['role']=role
-    temp_dict['response']=answer
-    chatgpt_responses[id_user] = temp_dict
-    save_to_local(chatgpt_responses, 'chatgpt_responses')
-    save_to_s3(chatgpt_responses, 'chatgpt_responses')
+    # chatgpt_responses = {}
+    # temp_dict = {}
+    # temp_dict['role']=role
+    # temp_dict['response']=answer
+    # chatgpt_responses[id_user] = temp_dict
+    # save_to_local(chatgpt_responses, 'chatgpt_responses')
+    # save_to_s3(chatgpt_responses, 'chatgpt_responses')
 
     background_tasks.add_task(nueva_ruta_educativa, role, id_user)
 
@@ -174,6 +175,7 @@ def nueva_ruta_educativa(role: str, id_user: str):
 
             while tries < 5:
                 try:
+                    download_from_s3('rutas_educativas')
                     rutas_educativas = load_from_local('rutas_educativas')
                     temp_dict = {}
                     temp_dict['ruta']=ruta_educativa
@@ -186,13 +188,13 @@ def nueva_ruta_educativa(role: str, id_user: str):
                     tries += 1
                     continue
 
-            rutas_educativas = {}
-            temp_dict = {}
-            temp_dict['ruta']=ruta_educativa
-            rutas_educativas[id_user] = temp_dict
-            save_to_local(rutas_educativas, 'rutas_educativas')
-            save_to_s3(rutas_educativas, 'rutas_educativas')
-            break
+            # rutas_educativas = {}
+            # temp_dict = {}
+            # temp_dict['ruta']=ruta_educativa
+            # rutas_educativas[id_user] = temp_dict
+            # save_to_local(rutas_educativas, 'rutas_educativas')
+            # save_to_s3(rutas_educativas, 'rutas_educativas')
+            # break
 
         except:
             print('ERROR GENERANDO RUTA EDUCATIVA')
