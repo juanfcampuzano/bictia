@@ -287,10 +287,11 @@ def get_ruta_educativa(user_id: str):
             rutas_educativas = pkl.load(open('/app/pkl-data/rutas_educativas.pkl','rb'))
             return rutas_educativas[user_id]
             break
-        except:
+        except Exception as e:
+            print(e)
             tries += 1
             continue
-
+    print(rutas_educativas)
     return{"message":"error"}
 
 @app.on_event("startup")
