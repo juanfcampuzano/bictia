@@ -101,7 +101,7 @@ def nueva_ruta_educativa(role: str, id_user: str):
         try:
             role = role.replace('_', ' ')
 
-            token = 'Wwjmxcwbp1CwsT6rGiByeysyVnAV-eWEKoCPp1wcFsJVGGuYiMWv9xaKaoa2KIJCwMWfBA.'
+            token = 'XAjmxb_yUG3YuN-LYn-vqzvHh7wMrRdyjgalK3-KYHHsvodXv_LsYDV0rChI8l3r7N_JyQ.'
             query = '''imagine you are a curriculum designer. Please design for me a curriculum for being a '''+role+'''. Provide it in a json format like this example {
             "Core Curriculum": {
                 "Introduction to Data Analysis": ["What is data analysis?", "The data analysis process", "Data types and structures"],
