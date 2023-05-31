@@ -297,5 +297,5 @@ def get_ruta_educativa(user_id: str):
 async def startup():
     site.mount_app(app)
     download_from_s3('chatgpt_responses','/app/pkl-data/')
-    download_from_s3('chatgpt_responses','/app/pkl-data/')
+    download_from_s3('rutas_educativas','/app/pkl-data/')
     scheduler.start()
