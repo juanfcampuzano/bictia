@@ -291,7 +291,6 @@ def get_ruta_educativa(user_id: str):
             print(e)
             tries += 1
             continue
-    print(rutas_educativas)
     return{"message":"error"}
 
 @app.on_event("startup")
