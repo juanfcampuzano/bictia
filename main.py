@@ -12,6 +12,7 @@ from fastapi_scheduler import SchedulerAdmin
 from fastapi_amis_admin.admin.site import AdminSite
 from fastapi_amis_admin.admin.settings import Settings
 from pydantic import BaseModel
+import openai
 
 app = FastAPI()
 
@@ -101,32 +102,42 @@ def nueva_ruta_educativa(role: str, id_user: str):
         try:
             role = role.replace('_', ' ')
 
-            token = 'XAjmxb_yUG3YuN-LYn-vqzvHh7wMrRdyjgalK3-KYHHsvodXv_LsYDV0rChI8l3r7N_JyQ.'
-            query = '''imagine you are a curriculum designer. Please design for me a curriculum for being a '''+role+'''. Provide it in a json format like this example {
-            "Core Curriculum": {
-                "Introduction to Data Analysis": ["What is data analysis?", "The data analysis process", "Data types and structures"],
-                "Data Wrangling": ["Data cleaning", "Data transformation", "Data integration"],
-                "Statistical Analysis": ["Descriptive statistics", "Inferential statistics", "Regression analysis"],
-                "Machine Learning": ["Supervised learning", "Unsupervised learning", "Deep learning"],
-                "Data Visualization": ["Creating data visualizations", "Interpreting data visualizations"]
-            },
-            "Technical Skills": {
-                "Programming": ["Python", "SQL"],
-                "Data Science Tools": ["R", "Tableau", "Power BI"],
-                "Cloud Computing": ["AWS", "Azure", "Google Cloud Platform"]
-            },
-            "Soft Skills": {
-                "Communication": ["Presenting data", "Writing reports"],
-                "Problem Solving": ["Identifying problems", "Developing solutions"],
-                "Critical Thinking": ["Analyzing data", "Making decisions"],
-                "Teamwork": ["Working with others", "Collaborating on projects"]
-            }
-            }'''
+            carreer = role
 
-            bard = Bard(token=token)
-            bard.get_answer(query)['content']
+            openai.api_key = "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"
+            carreer = 'frontend developer'
 
-            string = bard.get_answer(query)['content']
+            completion = openai.ChatCompletion.create(
+            model = "gpt-3.5-turbo",
+            max_tokens = 2000,
+            messages = [
+                {"role": "system", "content": "You are a curriculum designer."},
+                {"role": "user", "content": "Please design for me a curriculum for being a data analyst. Provide it in a json format"},
+                {"role": "assistant", "content": """{
+                "Core Curriculum": {
+                    "Introduction to Data Analysis": ["What is data analysis?", "The data analysis process", "Data types and structures"],
+                    "Data Wrangling": ["Data cleaning", "Data transformation", "Data integration"],
+                    "Statistical Analysis": ["Descriptive statistics", "Inferential statistics", "Regression analysis"],
+                    "Machine Learning": ["Supervised learning", "Unsupervised learning", "Deep learning"],
+                    "Data Visualization": ["Creating data visualizations", "Interpreting data visualizations"]
+                },
+                "Technical Skills": {
+                    "Programming": ["Python", "SQL"],
+                    "Data Science Tools": ["R", "Tableau", "Power BI"],
+                    "Cloud Computing": ["AWS", "Azure", "Google Cloud Platform"]
+                },
+                "Soft Skills": {
+                    "Communication": ["Presenting data", "Writing reports"],
+                    "Problem Solving": ["Identifying problems", "Developing solutions"],
+                    "Critical Thinking": ["Analyzing data", "Making decisions"],
+                    "Teamwork": ["Working with others", "Collaborating on projects"]
+                }
+                }"""},
+                {"role": "user", "content": "Please design for me a curriculum for being a " +carreer+". Provide it in a json format"}
+            ]
+            )
+
+            string = str(completion.choices[0].message['content'])
             first_curly = string.find('{')
             last_curly = string.rfind('}')
             string = string[first_curly:last_curly+1]
@@ -206,34 +217,73 @@ def nueva_ruta_educativa(role: str, id_user: str):
 @app.get("/{role}")
 def post_ruta_educativa(role: str):
     
-    role = role.replace('_', ' ')
+    # role = role.replace('_', ' ')
 
-    token = 'XAjmxb_yUG3YuN-LYn-vqzvHh7wMrRdyjgalK3-KYHHsvodXv_LsYDV0rChI8l3r7N_JyQ.'
-    query = '''imagine you are a curriculum designer. Please design for me a curriculum for being a '''+role+'''. Provide it in a json format like this example {
-    "Core Curriculum": {
-        "Introduction to Data Analysis": ["What is data analysis?", "The data analysis process", "Data types and structures"],
-        "Data Wrangling": ["Data cleaning", "Data transformation", "Data integration"],
-        "Statistical Analysis": ["Descriptive statistics", "Inferential statistics", "Regression analysis"],
-        "Machine Learning": ["Supervised learning", "Unsupervised learning", "Deep learning"],
-        "Data Visualization": ["Creating data visualizations", "Interpreting data visualizations"]
-    },
-    "Technical Skills": {
-        "Programming": ["Python", "SQL"],
-        "Data Science Tools": ["R", "Tableau", "Power BI"],
-        "Cloud Computing": ["AWS", "Azure", "Google Cloud Platform"]
-    },
-    "Soft Skills": {
-        "Communication": ["Presenting data", "Writing reports"],
-        "Problem Solving": ["Identifying problems", "Developing solutions"],
-        "Critical Thinking": ["Analyzing data", "Making decisions"],
-        "Teamwork": ["Working with others", "Collaborating on projects"]
-    }
-    }'''
+    # token = 'XAjmxb_yUG3YuN-LYn-vqzvHh7wMrRdyjgalK3-KYHHsvodXv_LsYDV0rChI8l3r7N_JyQ.'
+    # query = '''imagine you are a curriculum designer. Please design for me a curriculum for being a '''+role+'''. Provide it in a json format like this example {
+    # "Core Curriculum": {
+    #     "Introduction to Data Analysis": ["What is data analysis?", "The data analysis process", "Data types and structures"],
+    #     "Data Wrangling": ["Data cleaning", "Data transformation", "Data integration"],
+    #     "Statistical Analysis": ["Descriptive statistics", "Inferential statistics", "Regression analysis"],
+    #     "Machine Learning": ["Supervised learning", "Unsupervised learning", "Deep learning"],
+    #     "Data Visualization": ["Creating data visualizations", "Interpreting data visualizations"]
+    # },
+    # "Technical Skills": {
+    #     "Programming": ["Python", "SQL"],
+    #     "Data Science Tools": ["R", "Tableau", "Power BI"],
+    #     "Cloud Computing": ["AWS", "Azure", "Google Cloud Platform"]
+    # },
+    # "Soft Skills": {
+    #     "Communication": ["Presenting data", "Writing reports"],
+    #     "Problem Solving": ["Identifying problems", "Developing solutions"],
+    #     "Critical Thinking": ["Analyzing data", "Making decisions"],
+    #     "Teamwork": ["Working with others", "Collaborating on projects"]
+    # }
+    # }'''
 
-    bard = Bard(token=token)
-    bard.get_answer(query)['content']
+    
 
-    string = bard.get_answer(query)['content']
+    # bard = Bard(token=token)
+    # bard.get_answer(query)['content']
+
+    # string = bard.get_answer(query)['content']
+
+    openai.api_key = "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"
+    carreer = role
+
+    completion = openai.ChatCompletion.create(
+    model = "gpt-3.5-turbo",
+    max_tokens = 2000,
+    messages = [
+        {"role": "system", "content": "You are a curriculum designer."},
+        {"role": "user", "content": "Please design for me a curriculum for being a data analyst. Provide it in a json format"},
+        {"role": "assistant", "content": """{
+        "Core Curriculum": {
+            "Introduction to Data Analysis": ["What is data analysis?", "The data analysis process", "Data types and structures"],
+            "Data Wrangling": ["Data cleaning", "Data transformation", "Data integration"],
+            "Statistical Analysis": ["Descriptive statistics", "Inferential statistics", "Regression analysis"],
+            "Machine Learning": ["Supervised learning", "Unsupervised learning", "Deep learning"],
+            "Data Visualization": ["Creating data visualizations", "Interpreting data visualizations"]
+        },
+        "Technical Skills": {
+            "Programming": ["Python", "SQL"],
+            "Data Science Tools": ["R", "Tableau", "Power BI"],
+            "Cloud Computing": ["AWS", "Azure", "Google Cloud Platform"]
+        },
+        "Soft Skills": {
+            "Communication": ["Presenting data", "Writing reports"],
+            "Problem Solving": ["Identifying problems", "Developing solutions"],
+            "Critical Thinking": ["Analyzing data", "Making decisions"],
+            "Teamwork": ["Working with others", "Collaborating on projects"]
+        }
+        }"""},
+        {"role": "user", "content": "Please design for me a curriculum for being a " +carreer+". Provide it in a json format"}
+    ]
+    )
+
+    string = str(completion.choices[0].message['content'])
+
+
     first_curly = string.find('{')
     last_curly = string.rfind('}')
     string = string[first_curly:last_curly+1]
