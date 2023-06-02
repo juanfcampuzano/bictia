@@ -97,8 +97,8 @@ async def save_chatgpt_query(request: ChatGPTRequest, background_tasks: Backgrou
     return {"message": "respuesta agregada correctamente"}
 
 def nueva_ruta_educativa(role: str, id_user: str):
-    tries = 0
-    while tries < 5:
+    tries1 = 0
+    while tries1 < 5:
         try:
             role = role.replace('_', ' ')
 
@@ -206,12 +206,12 @@ def nueva_ruta_educativa(role: str, id_user: str):
             # save_to_local(rutas_educativas, 'rutas_educativas')
             # save_to_s3(rutas_educativas, 'rutas_educativas')
             # break
-
+            break
         except Exception as e:
             print('ERROR GENERANDO RUTA EDUCATIVA')
             print(e)
             print('REINTENTANDO {}'.format(tries))
-            tries +=1
+            tries1 +=1
             continue
 
 @app.get("/{role}")
