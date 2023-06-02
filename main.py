@@ -105,7 +105,6 @@ def nueva_ruta_educativa(role: str, id_user: str):
             carreer = role
 
             openai.api_key = "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"
-            carreer = 'frontend developer'
 
             completion = openai.ChatCompletion.create(
             model = "gpt-3.5-turbo",
