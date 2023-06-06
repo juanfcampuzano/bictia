@@ -13,6 +13,7 @@ from fastapi_amis_admin.admin.site import AdminSite
 from fastapi_amis_admin.admin.settings import Settings
 from pydantic import BaseModel
 import openai
+from resume_parser import resumeparse
 
 app = FastAPI()
 
@@ -31,6 +32,10 @@ class ChatGPTRequest(BaseModel):
     id_user: str
     role: str
     answer: str
+
+@app.get("/parse_resume")
+def parse_resume():
+    return resumeparse.read_file('/app/pkl-data/CampuzanoJResume.pdf')
 
 def save_to_local(obj, name):
     pkl.dump(obj, open('/app/pkl-data/'+str(name)+'.pkl', 'wb'))
