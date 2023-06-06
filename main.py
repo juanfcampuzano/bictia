@@ -14,6 +14,7 @@ from fastapi_amis_admin.admin.settings import Settings
 from pydantic import BaseModel
 import openai
 import spacy
+import shutil
 from resume_parser import resumeparse
 
 app = FastAPI()
@@ -38,8 +39,23 @@ spacy.load('en_core_web_sm')
 
 @app.post("/parse_resume")
 async def parse_resume(file: UploadFile = File(...)):
-    print(file.filename)
-    return resumeparse.read_file(file)
+    try:
+        # Guardar el archivo subido en el sistema de archivos
+        with open("temp_resume.pdf", "wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
+        
+        # Pasar la ruta del archivo a resume_parser
+        parsed_resume = resumeparse.read_file("temp_resume.pdf")
+        
+        # Realizar operaciones con el archivo procesado
+        # ...
+        
+        return parsed_resume
+    
+    finally:
+        # Eliminar el archivo temporal después de procesarlo
+        os.remove("temp_resume.pdf")
+        
 
 def save_to_local(obj, name):
     pkl.dump(obj, open('/app/pkl-data/'+str(name)+'.pkl', 'wb'))
