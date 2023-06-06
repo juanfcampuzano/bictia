@@ -37,9 +37,9 @@ class ChatGPTRequest(BaseModel):
 spacy.load('en_core_web_sm')
 
 @app.post("/parse_resume")
-def parse_resume(file: UploadFile = File(...)):
+async def parse_resume(file: UploadFile = File(...)):
     print(file.filename)
-    return resumeparse.read_file(file.filename)
+    return resumeparse.read_file(file)
 
 def save_to_local(obj, name):
     pkl.dump(obj, open('/app/pkl-data/'+str(name)+'.pkl', 'wb'))
