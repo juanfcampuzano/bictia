@@ -13,6 +13,7 @@ from fastapi_amis_admin.admin.site import AdminSite
 from fastapi_amis_admin.admin.settings import Settings
 from pydantic import BaseModel
 import openai
+import spacy
 from resume_parser import resumeparse
 
 app = FastAPI()
@@ -32,7 +33,7 @@ class ChatGPTRequest(BaseModel):
     id_user: str
     role: str
     answer: str
-
+spacy.load('en_core_web_sm')
 @app.get("/parse_resume")
 def parse_resume():
     return resumeparse.read_file('/app/pkl-data/CampuzanoJResume.pdf')
