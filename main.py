@@ -35,6 +35,9 @@ class ChatGPTRequest(BaseModel):
     role: str
     answer: str
     
+class ParseVacanteRequest(BaseModel):
+    descripcion_vacante: str
+
 spacy.load('en_core_web_sm')
 
 @app.post("/parse_resume")
@@ -83,6 +86,45 @@ def download_from_s3(name, path):
     nombre_archivo_local = str(path)+str(name)+'.pkl'
     s3.download_file('profile-matching-coally', str(name)+'.pkl', nombre_archivo_local)
     print('TERMINE DE DESCARGAR '+name +' DE S3')
+
+@app.post("/parsear_vacante")
+def parse_opportunity(request: ParseVacanteRequest):
+
+    vacante = request.descripcion_vacante
+
+    vacante_ejemplo = """Técnicos/Tecnólogos en electricidad para varias ciudades en el Valle (Yumbo, Palmira):
+    Apoyo de sostenimiento: 1.160.000
+    Fecha estimada de contratación: inmediata
+    • Apoyo en las inspecciones de rutina de los equipos electrónicos de la planta
+    • Apoyo en la elaboración de informes de gestión de mantenimiento
+    • Apoyo en la ejecución de las actividades de mantenimiento de los equipos"""
+
+    openai.api_key = "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"
+    completion = openai.ChatCompletion.create(
+    model = "gpt-3.5-turbo",
+    max_tokens = 2000,
+    messages = [
+        {"role": "system", "content": "Eres un experto en recursos humanos."},
+        {"role": "user", "content": "Extraeme la siguiente información de la vacante que te doy: Titulo, Ciudad, Habilidades blandas, Habilidades, Técnicas, Responsabilidades, Modalidad (remoto o presencial), Salario, Carrera, Tipo de contrato (Término indefinido, proyecto, prestación de servicios o full time, etc). Si no encuentras alguna pon 'NA'. La vacante es la siguiente: "+vacante_ejemplo},
+        {"role": "assistant", "content": """Nombre de la vacante: Técnicos/Tecnólogos en electricidad
+    Empresa: NA
+    Ciudad: Yumbo, Palmira (varias ciudades en el Valle)
+    Departamento: NA
+    Habilidades técnicas: Inspecciones de rutina de equipos electrónicos, elaboración de informes de gestión de mantenimiento, ejecución de actividades de mantenimiento de equipos
+    Habilidades blandas: NA
+    Salario: 1.160.000
+    Responsabilidades : Apoyo en las inspecciones de rutina de los equipos electrónicos de la planta, apoyo en la elaboración de informes de gestión de mantenimiento, apoyo en la ejecución de las actividades de mantenimiento de los equipos
+    Modalidad: NA
+    Carrera universitaria: Tecnología en electricidad
+    Tipo de contrato: NA"""},
+        {"role": "user", "content": "Extraeme la siguiente información de la vacante que te doy: Titulo, Ciudad, Habilidades blandas, Habilidades, Técnicas, Responsabilidades, Modalidad (remoto o presencial), Salario, Carrera, Tipo de contrato (Término indefinido, proyecto, prestación de servicios o full time, etc). Si no encuentras alguna pon 'NA'. La vacante es la siguiente: "+vacante}
+    ]
+    )
+
+    string = str(completion.choices[0].message['content'])
+    return string
+
+
 
 
 @app.post("/save_chatgpt_query")
