@@ -105,24 +105,24 @@ def parse_opportunity(request: ParseVacanteRequest):
     max_tokens = 2000,
     messages = [
         {"role": "system", "content": "Eres un experto en recursos humanos."},
-        {"role": "user", "content": "Extraeme la siguiente información de la vacante que te doy: Titulo, Ciudad, Habilidades blandas, Habilidades, Técnicas, Responsabilidades, Modalidad (remoto o presencial), Salario, Carrera, Tipo de contrato (Término indefinido, proyecto, prestación de servicios o full time, etc). Si no encuentras alguna pon 'NA'. La vacante es la siguiente: "+vacante_ejemplo},
-        {"role": "assistant", "content": """Nombre de la vacante: Técnicos/Tecnólogos en electricidad
-    Empresa: NA
-    Ciudad: Yumbo, Palmira (varias ciudades en el Valle)
-    Departamento: NA
-    Habilidades técnicas: Inspecciones de rutina de equipos electrónicos, elaboración de informes de gestión de mantenimiento, ejecución de actividades de mantenimiento de equipos
-    Habilidades blandas: NA
-    Salario: 1.160.000
-    Responsabilidades : Apoyo en las inspecciones de rutina de los equipos electrónicos de la planta, apoyo en la elaboración de informes de gestión de mantenimiento, apoyo en la ejecución de las actividades de mantenimiento de los equipos
-    Modalidad: NA
-    Carrera universitaria: Tecnología en electricidad
-    Tipo de contrato: NA"""},
-        {"role": "user", "content": "Extraeme la siguiente información de la vacante que te doy: Titulo, Ciudad, Habilidades blandas, Habilidades, Técnicas, Responsabilidades, Modalidad (remoto o presencial), Salario, Carrera, Tipo de contrato (Término indefinido, proyecto, prestación de servicios o full time, etc). Si no encuentras alguna pon 'NA'. La vacante es la siguiente: "+vacante}
+        {"role": "user", "content": "Extraeme la siguiente información de la vacante que te doy en formato json: Titulo, Ciudad, Habilidades blandas, Habilidades, Técnicas, Responsabilidades, Modalidad (remoto o presencial), Salario, Carrera, Tipo de contrato (Término indefinido, proyecto, prestación de servicios o full time, etc). Si no encuentras alguna pon 'NA'. La vacante es la siguiente: "+vacante_ejemplo},
+        {"role": "assistant", "content": """{"Nombre de la vacante": "Técnicos/Tecnólogos en electricidad",
+    "Empresa": "NA",
+    "Ciudad": "Yumbo, Palmira (varias ciudades en el Valle)",
+    "Departamento": "NA",
+    "Habilidades técnicas": "Inspecciones de rutina de equipos electrónicos, elaboración de informes de gestión de mantenimiento, ejecución de actividades de mantenimiento de equipos",
+    "Habilidades blandas": "NA",
+    "Salario": "1.160.000",
+    "Responsabilidades : "Apoyo en las inspecciones de rutina de los equipos electrónicos de la planta, apoyo en la elaboración de informes de gestión de mantenimiento, apoyo en la ejecución de las actividades de mantenimiento de los equipos",
+    "Modalidad: "NA",
+    "Carrera universitaria: "Tecnología en electricidad",
+    "Tipo de contrato": "NA"}"""},
+        {"role": "user", "content": "Extraeme la siguiente información de la vacante que te doy en formato json: Titulo, Ciudad, Habilidades blandas, Habilidades, Técnicas, Responsabilidades, Modalidad (remoto o presencial), Salario, Carrera, Tipo de contrato (Término indefinido, proyecto, prestación de servicios o full time, etc). Si no encuentras alguna pon 'NA'. La vacante es la siguiente: "+vacante}
     ]
     )
 
     string = str(completion.choices[0].message['content'])
-    return string
+    return json.loads(string)
 
 
 
