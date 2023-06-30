@@ -89,40 +89,48 @@ def download_from_s3(name, path):
 
 @app.post("/parsear_vacante")
 def parse_opportunity(request: ParseVacanteRequest):
+    max_tries = 5
+    tries = 0
 
-    vacante = request.descripcion_vacante
+    while True:
+        try:
+            vacante = request.descripcion_vacante
 
-    vacante_ejemplo = """Técnicos/Tecnólogos en electricidad para varias ciudades en el Valle (Yumbo, Palmira):
-    Apoyo de sostenimiento: 1.160.000
-    Fecha estimada de contratación: inmediata
-    • Apoyo en las inspecciones de rutina de los equipos electrónicos de la planta
-    • Apoyo en la elaboración de informes de gestión de mantenimiento
-    • Apoyo en la ejecución de las actividades de mantenimiento de los equipos"""
+            vacante_ejemplo = """Técnicos/Tecnólogos en electricidad para varias ciudades en el Valle (Yumbo, Palmira):
+            Apoyo de sostenimiento: 1.160.000
+            Fecha estimada de contratación: inmediata
+            • Apoyo en las inspecciones de rutina de los equipos electrónicos de la planta
+            • Apoyo en la elaboración de informes de gestión de mantenimiento
+            • Apoyo en la ejecución de las actividades de mantenimiento de los equipos"""
 
-    openai.api_key = "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"
-    completion = openai.ChatCompletion.create(
-    model = "gpt-3.5-turbo",
-    max_tokens = 2000,
-    messages = [
-        {"role": "system", "content": "Eres un experto en recursos humanos."},
-        {"role": "user", "content": "Extraeme la siguiente información de la vacante que te doy en formato json: Titulo, Ciudad, Habilidades blandas, Habilidades, Técnicas, Responsabilidades, Modalidad (remoto o presencial), Salario, Carrera, Tipo de contrato (Término indefinido, proyecto, prestación de servicios o full time, etc). Si no encuentras alguna pon 'NA'. La vacante es la siguiente: "+vacante_ejemplo},
-        {"role": "assistant", "content": """{"Nombre de la vacante": "Técnicos/Tecnólogos en electricidad",
-    "Empresa": "NA",
-    "Ciudad": "Yumbo, Palmira (varias ciudades en el Valle)",
-    "Departamento": "NA",
-    "Habilidades técnicas": "Inspecciones de rutina de equipos electrónicos, elaboración de informes de gestión de mantenimiento, ejecución de actividades de mantenimiento de equipos",
-    "Habilidades blandas": "NA",
-    "Salario": "1.160.000",
-    "Responsabilidades : "Apoyo en las inspecciones de rutina de los equipos electrónicos de la planta, apoyo en la elaboración de informes de gestión de mantenimiento, apoyo en la ejecución de las actividades de mantenimiento de los equipos",
-    "Modalidad: "NA",
-    "Carrera universitaria: "Tecnología en electricidad",
-    "Tipo de contrato": "NA"}"""},
-        {"role": "user", "content": "Extraeme la siguiente información de la vacante que te doy en formato json: Titulo, Ciudad, Habilidades blandas, Habilidades, Técnicas, Responsabilidades, Modalidad (remoto o presencial), Salario, Carrera, Tipo de contrato (Término indefinido, proyecto, prestación de servicios o full time, etc). Si no encuentras alguna pon 'NA'. La vacante es la siguiente: "+vacante}
-    ]
-    )
+            openai.api_key = "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"
+            completion = openai.ChatCompletion.create(
+            model = "gpt-3.5-turbo",
+            max_tokens = 2000,
+            messages = [
+                {"role": "system", "content": "Eres un experto en recursos humanos."},
+                {"role": "user", "content": "Extraeme la siguiente información de la vacante que te doy en formato json: Titulo, Ciudad, Habilidades blandas, Habilidades, Técnicas, Responsabilidades, Modalidad (remoto o presencial), Salario, Carrera, Tipo de contrato (Término indefinido, proyecto, prestación de servicios o full time, etc). Si no encuentras alguna pon 'NA'. La vacante es la siguiente: "+vacante_ejemplo},
+                {"role": "assistant", "content": """{"Nombre de la vacante": "Técnicos/Tecnólogos en electricidad",
+            "Empresa": "NA",
+            "Ciudad": "Yumbo, Palmira (varias ciudades en el Valle)",
+            "Departamento": "NA",
+            "Habilidades técnicas": "Inspecciones de rutina de equipos electrónicos, elaboración de informes de gestión de mantenimiento, ejecución de actividades de mantenimiento de equipos",
+            "Habilidades blandas": "NA",
+            "Salario": "1.160.000",
+            "Responsabilidades : "Apoyo en las inspecciones de rutina de los equipos electrónicos de la planta, apoyo en la elaboración de informes de gestión de mantenimiento, apoyo en la ejecución de las actividades de mantenimiento de los equipos",
+            "Modalidad: "NA",
+            "Carrera universitaria: "Tecnología en electricidad",
+            "Tipo de contrato": "NA"}"""},
+                {"role": "user", "content": "Extraeme la siguiente información de la vacante que te doy en formato json: Titulo, Ciudad, Habilidades blandas, Habilidades, Técnicas, Responsabilidades, Modalidad (remoto o presencial), Salario, Carrera, Tipo de contrato (Término indefinido, proyecto, prestación de servicios o full time, etc). Si no encuentras alguna pon 'NA'. La vacante es la siguiente: "+vacante}
+            ]
+            )
 
-    string = str(completion.choices[0].message['content'])
-    return json.loads(string)
+            string = str(completion.choices[0].message['content'])
+            return json.loads(string)
+        except:
+            if tries == max_tries:
+                return {'response':'Error despues de 5 intentos'}
+            tries += 1
 
 
 
