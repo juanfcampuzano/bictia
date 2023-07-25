@@ -16,6 +16,18 @@ import openai
 import spacy
 import shutil
 from resume_parser import resumeparse
+import json
+from langchain.docstore.document import Document
+from langchain.vectorstores import DocArrayInMemorySearch
+from langchain.chains import RetrievalQA
+from langchain.embeddings import OpenAIEmbeddings
+from langchain.chat_models import ChatOpenAI
+from IPython.display import display, Markdown
+from langchain.prompts import ChatPromptTemplate
+from dotenv import load_dotenv, find_dotenv
+_ = load_dotenv(find_dotenv()) # read local .env file
+import ast
+import os
 
 app = FastAPI()
 
@@ -131,8 +143,6 @@ def parse_opportunity(request: ParseVacanteRequest):
             if tries == max_tries:
                 return {'response':'Error despues de 5 intentos'}
             tries += 1
-
-
 
 
 @app.post("/save_chatgpt_query")
@@ -416,6 +426,87 @@ def get_ruta_educativa(user_id: str):
             tries += 1
             continue
     return{"message":"error"}
+
+@app.get("/ruta_educativa_bbits/{role}")
+def post_ruta_educativa_bbits(role: str):
+    def loadJSONFile(file):
+        docs=[]
+        # Load JSON file
+        data = json.load(file)
+
+        # Iterate through 'pages'
+        for curso in data:
+            id = curso['id']
+            precio = curso['precio']
+            duracion = curso['duracion']
+            categoria = curso['categoria']
+            titulo = curso['titulo']
+            contenido = curso['contenido']
+            metadata={"id":id}
+
+            # Process snippets for each page
+            contenidos_temas = []
+            titulos_temas = []
+            for tema in contenido:
+                titulo_tema = tema['titulo']
+                contenido_tema = tema['contenido']
+
+                contenidos_temas.append(contenido_tema)
+                titulos_temas.append(titulo_tema)
+
+
+            docs.append(Document(page_content= 'id: ' + str(id) + ' titulo: ' + titulo + ' categoria: ' + categoria + ' ' + ' contenidos ' +  ' '.join(titulos_temas) + ' ' + ' '.join(contenido_tema), metadata=metadata))
+        return docs 
+    
+    docs = loadJSONFile(open('docs_bbits/Cursos.json', 'rb'))
+    embeddings = OpenAIEmbeddings()
+    db = DocArrayInMemorySearch.from_documents(
+    docs, 
+    embeddings
+    )
+    llm = ChatOpenAI(temperature = 0.0)
+    retriever = db.as_retriever(search_kwargs={"k": 10})
+
+    qa_stuff = RetrievalQA.from_chain_type(
+    llm=llm, 
+    chain_type="stuff", 
+    retriever=retriever, 
+    verbose=True
+    )
+
+    query =  f"Listame todos los cursos que me orientarán a ser un {role} si no tienes cursos aropiados no inventes respuestas, solo di que no sabes. Tienes que incluir el titulo y el id del curso\
+    en markdown y resume cada uno."
+
+    response = qa_stuff.run(query)
+
+    review_template = """\
+    Para el siguiente texto que está en formato markdown y contiene información de varios cursos, extrae la siguiente información para cada curso:
+
+    id: ¿Cuál es el id del curso? \
+    Si esta información no se encuentra, el valor debe ser -1.
+
+    titulo: ¿Cuál es el título del curso? \
+    Si esta información no se encuentra, el valor debe ser -1.
+
+    descripcion: ¿Cuál es el resumen del curso? \
+    Si esta información no se encuentra, el valor debe ser -1.
+
+    Formatea la salida como lista de JSON con las siguientes claves para cada curso:
+    id
+    titulo
+    descripcion
+
+    texto: {text}
+    """
+    prompt_template = ChatPromptTemplate.from_template(review_template)
+
+    messages = prompt_template.format_messages(text=response)
+    formated_response = llm(messages)
+
+    respuesta = ast.literal_eval(formated_response.content)
+
+    return respuesta
+
 
 @app.on_event("startup")
 async def startup():
