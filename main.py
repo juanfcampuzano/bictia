@@ -29,10 +29,6 @@ import ast
 import os
 
 app = FastAPI()
-
-site = AdminSite(settings=Settings(database_url_async='sqlite+aiosqlite:///amisadmin.db'))
-scheduler = SchedulerAdmin.bind(site)
-
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -40,6 +36,11 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+site = AdminSite(settings=Settings(database_url_async='sqlite+aiosqlite:///amisadmin.db'))
+scheduler = SchedulerAdmin.bind(site)
+
+
 
 class ChatGPTRequest(BaseModel):
     id_user: str
