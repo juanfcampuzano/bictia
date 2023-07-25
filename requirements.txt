@@ -41,4 +41,3 @@ pydantic
 chromadb==0.4.2
 tiktoken==0.4.0
 langchain[docarray]
-pyjq==2.6.0
