@@ -22,7 +22,6 @@ from langchain.vectorstores import DocArrayInMemorySearch
 from langchain.chains import RetrievalQA
 from langchain.embeddings import OpenAIEmbeddings
 from langchain.chat_models import ChatOpenAI
-from IPython.display import display, Markdown
 from langchain.prompts import ChatPromptTemplate
 from dotenv import load_dotenv, find_dotenv
 _ = load_dotenv(find_dotenv()) # read local .env file
