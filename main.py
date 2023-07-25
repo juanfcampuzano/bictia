@@ -509,7 +509,7 @@ def post_ruta_educativa_bbits(role: str):
 
 
 @app.on_event("startup")
-async def startup():
+def startup():
     site.mount_app(app)
     download_from_s3('chatgpt_responses','/app/pkl-data/')
     download_from_s3('rutas_educativas','/app/pkl-data/')
