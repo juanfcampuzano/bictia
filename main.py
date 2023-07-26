@@ -520,7 +520,7 @@ from langchain.vectorstores import Chroma
 
 @app.post('/match/emprendedor')
 def get_match_emprendedor(request: MatchUniandinoRequest):
-    
+
     embedding = OpenAIEmbeddings(openai_api_key='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')
     vectordb_emprendedores = Chroma(persist_directory= 'docs_emprendedores/chroma/', embedding_function=embedding)
     vectordb_inversionistas = Chroma(persist_directory= 'docs_inversionistas/chroma/', embedding_function=embedding)
@@ -528,6 +528,7 @@ def get_match_emprendedor(request: MatchUniandinoRequest):
     matches = {}
 
     question = request.focus + ' ' + request.subfocus + ' ' + request.interest
+    print(question)
     docs_inversionistas = vectordb_inversionistas.similarity_search(question,k=6)
     docs_emprendedores = vectordb_emprendedores.similarity_search(question,k=6)
     recomendaciones_inversionistas = [doc.metadata['row'] for doc in docs_inversionistas]
