@@ -44,7 +44,13 @@ app.add_middleware(
 site = AdminSite(settings=Settings(database_url_async='sqlite+aiosqlite:///amisadmin.db'))
 scheduler = SchedulerAdmin.bind(site)
 
-
+class MatchUniandinoRequest(BaseModel):
+    focus: str
+    subfocus: str
+    interest: str
+    stageInvestment: str
+    focusInvestment: str
+    locationInvestment: str
 
 class ChatGPTRequest(BaseModel):
     id_user: str
@@ -510,18 +516,26 @@ def post_ruta_educativa_bbits(role: str):
     respuesta = ast.literal_eval(formated_response.content)
 
     return respuesta
+from langchain.vectorstores import Chroma
 
-@app.get('/match/emprendedor/{id}')
-def get_match_emprendedor(id: float):
-    df_matches = pd.read_csv('match_uniandinos/recomendaciones_emprendedores.csv')
+@app.post('/match/emprendedor')
+def get_match_emprendedor(request: MatchUniandinoRequest):
+    
+    embedding = OpenAIEmbeddings(openai_api_key='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')
+    vectordb_emprendedores = Chroma(persist_directory= 'docs_emprendedores/chroma/', embedding_function=embedding)
+    vectordb_inversionistas = Chroma(persist_directory= 'docs_inversionistas/chroma/', embedding_function=embedding)
+    
     matches = {}
-    try:
-        df_matches['Emprendedor'] = df_matches['Emprendedor'].astype(float)
-        fila = df_matches[df_matches['Emprendedor'] == id]
-        matches = dict(zip(list(range(6)), fila.values[0][1:]))
-    except Exception as e:
-        print(e)
-    print(matches)
+
+    question = request.focus + ' ' + request.subfocus + ' ' + request.interest
+    docs_inversionistas = vectordb_inversionistas.similarity_search(question,k=6)
+    docs_emprendedores = vectordb_emprendedores.similarity_search(question,k=6)
+    recomendaciones_inversionistas = [doc.metadata['row'] for doc in docs_inversionistas]
+    recomendaciones_emprendedores = [doc.metadata['row'] for doc in docs_emprendedores]
+    matches_inversionistas = recomendaciones_inversionistas
+    matches_emprendedores = recomendaciones_emprendedores
+    matches['emprendedores'] = matches_emprendedores
+    matches['inversionistas'] = matches_inversionistas
     return matches
 
 @app.on_event("startup")
