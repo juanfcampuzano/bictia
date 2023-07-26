@@ -7,6 +7,7 @@ from youtubesearchpython import VideosSearch
 from bardapi import Bard
 import pickle as pkl
 import os
+import pandas as pd
 import boto3
 from fastapi_scheduler import SchedulerAdmin
 from fastapi_amis_admin.admin.site import AdminSite
@@ -28,6 +29,7 @@ _ = load_dotenv(find_dotenv()) # read local .env file
 import ast
 import os
 
+
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
@@ -36,6 +38,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
 
 site = AdminSite(settings=Settings(database_url_async='sqlite+aiosqlite:///amisadmin.db'))
 scheduler = SchedulerAdmin.bind(site)
@@ -507,10 +511,22 @@ def post_ruta_educativa_bbits(role: str):
 
     return respuesta
 
+@app.get('/match/emprendedor/{id}')
+def get_match_emprendedor(id: float):
+    df_matches = pd.read_csv('match_uniandinos/recomendaciones_emprendedores.csv')
+    matches = {}
+    try:
+        df_matches['Emprendedor'] = df_matches['Emprendedor'].astype(float)
+        fila = df_matches[df_matches['Emprendedor'] == id]
+        matches = dict(zip(list(range(6)), fila.values[0][1:]))
+    except Exception as e:
+        print(e)
+    print(matches)
+    return matches
 
 @app.on_event("startup")
 def startup():
     site.mount_app(app)
-    download_from_s3('chatgpt_responses','/app/pkl-data/')
-    download_from_s3('rutas_educativas','/app/pkl-data/')
+    # download_from_s3('chatgpt_responses','/app/pkl-data/')
+    # download_from_s3('rutas_educativas','/app/pkl-data/')
     scheduler.start()
