@@ -28,6 +28,7 @@ from dotenv import load_dotenv, find_dotenv
 _ = load_dotenv(find_dotenv()) # read local .env file
 import ast
 import os
+from langchain.vectorstores import Chroma
 
 
 app = FastAPI()
@@ -187,7 +188,7 @@ async def save_chatgpt_query(request: ChatGPTRequest, background_tasks: Backgrou
     # save_to_local(chatgpt_responses, 'chatgpt_responses')
     # save_to_s3(chatgpt_responses, 'chatgpt_responses')
 
-    background_tasks.add_task(nueva_ruta_educativa, role, id_user)
+    background_tasks.add_task(nueva_ruta_educativa_bbits, role, id_user)
 
     return {"message": "respuesta agregada correctamente"}
 
@@ -307,6 +308,27 @@ def nueva_ruta_educativa(role: str, id_user: str):
             print('REINTENTANDO {}'.format(tries))
             tries1 +=1
             continue
+
+
+def nueva_ruta_educativa_bbits(role: str, id_user: str):
+
+    ruta = ruta_educativa_bbits(role)
+
+    while tries < 5:
+        try:
+            download_from_s3('rutas_educativas','/app/pkl-data/')
+            rutas_educativas = load_from_local('rutas_educativas')
+            temp_dict = {}
+            temp_dict['ruta']=ruta
+            rutas_educativas[id_user] = temp_dict
+            save_to_local(rutas_educativas, 'rutas_educativas')
+            save_to_s3(rutas_educativas, 'rutas_educativas')
+            break
+        except Exception as e:
+            print(e)
+            tries += 1
+            continue
+
 
 @app.get("/{role}")
 def post_ruta_educativa(role: str):
@@ -437,8 +459,87 @@ def get_ruta_educativa(user_id: str):
             continue
     return{"message":"error"}
 
-@app.get("/ruta_educativa_bbits/{role}")
-def post_ruta_educativa_bbits(role: str):
+# @app.get("/ruta_educativa_bbits/{role}")
+# def post_ruta_educativa_bbits(role: str):
+#     def loadJSONFile(file):
+#         docs=[]
+#         # Load JSON file
+#         data = json.load(file)
+
+#         # Iterate through 'pages'
+#         for curso in data:
+#             id = curso['id']
+#             precio = curso['precio']
+#             duracion = curso['duracion']
+#             categoria = curso['categoria']
+#             titulo = curso['titulo']
+#             contenido = curso['contenido']
+#             metadata={"id":id}
+
+#             # Process snippets for each page
+#             contenidos_temas = []
+#             titulos_temas = []
+#             for tema in contenido:
+#                 titulo_tema = tema['titulo']
+#                 contenido_tema = tema['contenido']
+
+#                 contenidos_temas.append(contenido_tema)
+#                 titulos_temas.append(titulo_tema)
+
+
+#             docs.append(Document(page_content= 'id: ' + str(id) + ' titulo: ' + titulo + ' categoria: ' + categoria + ' ' + ' contenidos ' +  ' '.join(titulos_temas) + ' ' + ' '.join(contenido_tema), metadata=metadata))
+#         return docs 
+    
+#     docs = loadJSONFile(open('docs_bbits/Cursos.json', 'rb'))
+#     embeddings = OpenAIEmbeddings()
+#     db = DocArrayInMemorySearch.from_documents(
+#     docs, 
+#     embeddings
+#     )
+#     llm = ChatOpenAI(temperature = 0.0)
+#     retriever = db.as_retriever(search_kwargs={"k": 10})
+
+#     qa_stuff = RetrievalQA.from_chain_type(
+#     llm=llm, 
+#     chain_type="stuff", 
+#     retriever=retriever, 
+#     verbose=True
+#     )
+
+#     query =  f"Listame todos los cursos que me orientarán a ser un {role} si no tienes cursos aropiados no inventes respuestas, solo di que no sabes. Tienes que incluir el titulo y el id del curso\
+#     en markdown y resume cada uno."
+
+#     response = qa_stuff.run(query)
+
+#     review_template = """\
+#     Para el siguiente texto que está en formato markdown y contiene información de varios cursos, extrae la siguiente información para cada curso:
+
+#     id: ¿Cuál es el id del curso? \
+#     Si esta información no se encuentra, el valor debe ser -1.
+
+#     titulo: ¿Cuál es el título del curso? \
+#     Si esta información no se encuentra, el valor debe ser -1.
+
+#     descripcion: ¿Cuál es el resumen del curso? \
+#     Si esta información no se encuentra, el valor debe ser -1.
+
+#     Formatea la salida como lista de JSON con las siguientes claves para cada curso:
+#     id
+#     titulo
+#     descripcion
+
+#     texto: {text}
+#     """
+#     prompt_template = ChatPromptTemplate.from_template(review_template)
+
+#     messages = prompt_template.format_messages(text=response)
+#     formated_response = llm(messages)
+
+#     respuesta = ast.literal_eval(formated_response.content)
+
+#     return respuesta
+
+def ruta_educativa_bbits(role: str):
     def loadJSONFile(file):
         docs=[]
         # Load JSON file
@@ -516,7 +617,7 @@ def post_ruta_educativa_bbits(role: str):
     respuesta = ast.literal_eval(formated_response.content)
 
     return respuesta
-from langchain.vectorstores import Chroma
+
 
 @app.post('/match/emprendedor')
 def get_match_emprendedor(request: MatchUniandinoRequest):
@@ -531,6 +632,10 @@ def get_match_emprendedor(request: MatchUniandinoRequest):
     print(question)
     docs_inversionistas = vectordb_inversionistas.similarity_search(question,k=6)
     docs_emprendedores = vectordb_emprendedores.similarity_search(question,k=6)
+
+
+    print(vectordb_inversionistas._collection.count())
+    print(vectordb_emprendedores._collection.count())
     recomendaciones_inversionistas = [doc.metadata['row'] for doc in docs_inversionistas]
     recomendaciones_emprendedores = [doc.metadata['row'] for doc in docs_emprendedores]
     matches_inversionistas = recomendaciones_inversionistas
