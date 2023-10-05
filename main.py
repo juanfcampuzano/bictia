@@ -313,6 +313,7 @@ def nueva_ruta_educativa(role: str, id_user: str):
 def nueva_ruta_educativa_bbits(role: str, id_user: str):
 
     ruta = ruta_educativa_bbits(role)
+    tries = 0
 
     while tries < 5:
         try:
