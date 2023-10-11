@@ -553,6 +553,7 @@ def ruta_educativa_bbits(role: str):
             titulo = curso['titulo']
             contenido = curso['contenido']
             metadata={"id":id}
+            url = 'https://www.bbits.es/cursos/'+str(id)
 
             # Process snippets for each page
             contenidos_temas = []
@@ -565,7 +566,7 @@ def ruta_educativa_bbits(role: str):
                 titulos_temas.append(titulo_tema)
 
 
-            docs.append(Document(page_content= 'id: ' + str(id) + ' titulo: ' + titulo + ' categoria: ' + categoria + ' ' + ' contenidos ' +  ' '.join(titulos_temas) + ' ' + ' '.join(contenido_tema), metadata=metadata))
+            docs.append(Document(page_content= 'id: ' + str(id) + ' titulo: ' + titulo + 'url: ' + url +' categoria: ' + categoria + ' ' + ' contenidos ' +  ' '.join(titulos_temas) + ' ' + ' '.join(contenido_tema), metadata=metadata))
         return docs 
     
     docs = loadJSONFile(open('docs_bbits/Cursos.json', 'rb'))
@@ -603,6 +604,7 @@ def ruta_educativa_bbits(role: str):
 
     Formatea la salida como lista de JSON con las siguientes claves para cada curso:
     id
+    url
     titulo
     descripcion
 
@@ -615,7 +617,6 @@ def ruta_educativa_bbits(role: str):
 
     respuesta = ast.literal_eval(formated_response.content)
 
-    respuesta['url'] = 'https://www.bbits.es/cursos/'+str(respuesta['id'])
 
     return respuesta
 
