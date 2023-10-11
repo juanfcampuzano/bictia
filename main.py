@@ -4,7 +4,6 @@ import json
 from fastapi.middleware.cors import CORSMiddleware
 import re
 from youtubesearchpython import VideosSearch
-from bardapi import Bard
 import pickle as pkl
 import os
 import pandas as pd
@@ -16,7 +15,6 @@ from pydantic import BaseModel
 import openai
 import spacy
 import shutil
-from resume_parser import resumeparse
 import json
 from langchain.docstore.document import Document
 from langchain.vectorstores import DocArrayInMemorySearch
@@ -320,6 +318,7 @@ def nueva_ruta_educativa_bbits(role: str, id_user: str):
             download_from_s3('rutas_educativas','/app/pkl-data/')
             rutas_educativas = load_from_local('rutas_educativas')
             temp_dict = {}
+            ruta['url'] = 'https://www.bbits.es/cursos/'+str(ruta['id'])
             temp_dict['ruta']=ruta
             rutas_educativas[id_user] = temp_dict
             save_to_local(rutas_educativas, 'rutas_educativas')
