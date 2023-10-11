@@ -318,7 +318,6 @@ def nueva_ruta_educativa_bbits(role: str, id_user: str):
             download_from_s3('rutas_educativas','/app/pkl-data/')
             rutas_educativas = load_from_local('rutas_educativas')
             temp_dict = {}
-            ruta['url'] = 'https://www.bbits.es/cursos/'+str(ruta['id'])
             temp_dict['ruta']=ruta
             rutas_educativas[id_user] = temp_dict
             save_to_local(rutas_educativas, 'rutas_educativas')
@@ -615,6 +614,8 @@ def ruta_educativa_bbits(role: str):
     formated_response = llm(messages)
 
     respuesta = ast.literal_eval(formated_response.content)
+
+    respuesta['url'] = 'https://www.bbits.es/cursos/'+str(respuesta['id'])
 
     return respuesta
 
