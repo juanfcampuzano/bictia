@@ -161,6 +161,9 @@ async def save_chatgpt_query(request: ChatGPTRequest, background_tasks: Backgrou
     role = request.role
     answer = request.answer
 
+    print('USUARIO: ' + str(id_user))
+    print('ROLE: ' + str(role))
+
     tries = 0
     while tries < 5:
         try:
