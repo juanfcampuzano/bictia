@@ -197,7 +197,7 @@ async def save_chatgpt_query(request: ChatGPTRequest, background_tasks: Backgrou
 
     return {"message": "respuesta agregada correctamente"}
 
-def nueva_ruta_educativa(role: str, id_user: str):
+def nueva_ruta_educativa(role: str):
     tries1 = 0
     while tries1 < 5:
         try:
@@ -265,20 +265,19 @@ def nueva_ruta_educativa(role: str, id_user: str):
                         row = {}
                         videosSearch = VideosSearch(subseccion, limit = 1)
                         result = videosSearch.result()['result'][0]
-                        row['seccion'] = [seccion]
-                        row['tema'] = [subseccion]
-                        row['titulo_video'] = [result['title']]
-                        row['url_video'] = [result['link']]
+                        row['id'] = [1]
+                        row['url'] = [result['link']]
+                        row['titulo'] = [result['title']]
+                        row['descripcion'] = ['']
                     else:
                         for tema in subseccion_actual:
                             row = {}
                             videosSearch = VideosSearch(tema, limit = 1)
                             result = videosSearch.result()['result'][0]
-                            row['seccion'] = [seccion]
-                            row['subseccion'] = [subseccion]
-                            row['tema'] = [tema]
-                            row['titulo_video'] = [result['title']]
-                            row['url_video'] = [result['link']]
+                            row['id'] = [1]
+                            row['url'] = [result['link']]
+                            row['titulo'] = [result['title']]
+                            row['descripcion'] = ['']
 
                     ruta_educativa.append(row)
 
@@ -286,14 +285,7 @@ def nueva_ruta_educativa(role: str, id_user: str):
 
             while tries < 5:
                 try:
-                    download_from_s3('rutas_educativas','/app/pkl-data/')
-                    rutas_educativas = load_from_local('rutas_educativas')
-                    temp_dict = {}
-                    temp_dict['ruta']=ruta_educativa
-                    rutas_educativas[id_user] = temp_dict
-                    save_to_local(rutas_educativas, 'rutas_educativas')
-                    save_to_s3(rutas_educativas, 'rutas_educativas')
-                    break
+                    return ruta_educativa
                 except Exception as e:
                     print(e)
                     tries += 1
@@ -318,6 +310,10 @@ def nueva_ruta_educativa(role: str, id_user: str):
 def nueva_ruta_educativa_bbits(role: str, id_user: str):
 
     ruta = ruta_educativa_bbits(role)
+
+    if ruta[0]['id'] == -1:
+        ruta = nueva_ruta_educativa(role)
+
     tries = 0
 
     while tries < 5:
