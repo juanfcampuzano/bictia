@@ -265,19 +265,19 @@ def nueva_ruta_educativa(role: str):
                         row = {}
                         videosSearch = VideosSearch(subseccion, limit = 1)
                         result = videosSearch.result()['result'][0]
-                        row['id'] = [1]
-                        row['url'] = [result['link']]
-                        row['titulo'] = [result['title']]
-                        row['descripcion'] = ['']
+                        row['id'] = 1
+                        row['url'] = result['link']
+                        row['titulo'] = result['title']
+                        row['descripcion'] = ''
                     else:
                         for tema in subseccion_actual:
                             row = {}
                             videosSearch = VideosSearch(tema, limit = 1)
                             result = videosSearch.result()['result'][0]
-                            row['id'] = [1]
-                            row['url'] = [result['link']]
-                            row['titulo'] = [result['title']]
-                            row['descripcion'] = ['']
+                            row['id'] = 1
+                            row['url'] = result['link']
+                            row['titulo'] = result['title']
+                            row['descripcion'] = ''
 
                     ruta_educativa.append(row)
 
