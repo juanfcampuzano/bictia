@@ -167,6 +167,13 @@ async def save_chatgpt_query(request: ChatGPTRequest, background_tasks: Backgrou
             download_from_s3('chatgpt_responses','/app/pkl-data/')
             chatgpt_responses = load_from_local('chatgpt_responses')
             temp_dict = {}
+
+            reemplazos = {'cto': 'gerente de tecnología y programación', 'ceo': 'gerente ejecutivo general', 'cfo': 'gerente de finanzas', 'cgo': 'gerente de crecimiento, relaciones y ventas'}
+            role = role.lower()
+            for key, value in reemplazos.items():
+                role = role.replace(key, value)
+
+
             temp_dict['role']=role
             temp_dict['response']=answer
             chatgpt_responses[id_user] = temp_dict
