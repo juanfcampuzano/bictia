@@ -312,10 +312,9 @@ def nueva_ruta_educativa(role: str):
 
 def nueva_ruta_educativa_bbits(role: str, id_user: str):
 
-    ruta = ruta_educativa_bbits(role)
+    # ruta = ruta_educativa_bbits(role)
 
-    if ruta[0]['id'] == -1:
-        ruta = nueva_ruta_educativa(role)
+    ruta = nueva_ruta_educativa(role)
 
     tries = 0
 
