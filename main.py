@@ -86,8 +86,6 @@ def save_to_local(obj, name):
 
 def save_to_s3(obj, name):
     print('SUBIENDO {} a s3'.format(name))
-    os.environ['AWS_ACCESS_KEY_ID'] = 'AKIAT36HIHLLWYBJ4VK6'
-    os.environ['AWS_SECRET_ACCESS_KEY'] = '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'
     s3 = boto3.client('s3')
     bucket = 'profile-matching-coally'  # Reemplaza con el nombre de tu bucket en S3
     key = str(name)+'.pkl'  # Reemplaza con la ruta y nombre de archivo en S3
@@ -100,8 +98,8 @@ def load_from_local(name):
 def download_from_s3(name, path):
     print('DESCARGANDO '+name +' DE S3')
     s3 = boto3.client('s3',
-                  aws_access_key_id='AKIAT36HIHLLWYBJ4VK6',
-                  aws_secret_access_key='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')
+                  aws_access_key_id=os.environ['AWS_ACCESS_KEY_ID'],
+                  aws_secret_access_key=os.environ['AWS_SECRET_ACCESS_KEY'])
 
     # Descarga el archivo PKL de S3 y guárdalo localmente
     nombre_archivo_local = str(path)+str(name)+'.pkl'
@@ -124,7 +122,7 @@ def parse_opportunity(request: ParseVacanteRequest):
             • Apoyo en la elaboración de informes de gestión de mantenimiento
             • Apoyo en la ejecución de las actividades de mantenimiento de los equipos"""
 
-            openai.api_key = "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"
+            openai.api_key = os.environ["OPENAIKEY"]
             completion = openai.ChatCompletion.create(
             model = "gpt-3.5-turbo",
             max_tokens = 2000,
@@ -208,7 +206,7 @@ def nueva_ruta_educativa(role: str):
 
             carreer = role
 
-            openai.api_key = "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"
+            openai.api_key = os.environ["OPENAIKEY"]
 
             completion = openai.ChatCompletion.create(
             model = "gpt-3.5-turbo",
@@ -368,7 +366,7 @@ def post_ruta_educativa(role: str):
 
     # string = bard.get_answer(query)['content']
 
-    openai.api_key = "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"
+    openai.api_key = os.environ["OPENAIKEY"]
     carreer = role
 
     completion = openai.ChatCompletion.create(
@@ -629,7 +627,7 @@ def ruta_educativa_bbits(role: str):
 @app.post('/match/emprendedor')
 def get_match_emprendedor(request: MatchUniandinoRequest):
 
-    embedding = OpenAIEmbeddings(openai_api_key='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')
+    embedding = OpenAIEmbeddings(openai_api_key=os.environ["OPENAIKEY"])
     vectordb_emprendedores = Chroma(persist_directory= 'docs_emprendedores/chroma/', embedding_function=embedding)
     vectordb_inversionistas = Chroma(persist_directory= 'docs_inversionistas/chroma/', embedding_function=embedding)
     
