@@ -27,6 +27,7 @@ _ = load_dotenv(find_dotenv()) # read local .env file
 import ast
 import os
 from langchain.vectorstores import Chroma
+from resume_parser import resumeparse
 
 
 app = FastAPI()
