@@ -304,7 +304,7 @@ def nueva_ruta_educativa(role: str):
         except Exception as e:
             print('ERROR GENERANDO RUTA EDUCATIVA')
             print(e)
-            print('REINTENTANDO {}'.format(tries))
+            print('REINTENTANDO {}'.format(tries1))
             tries1 +=1
             continue
 
