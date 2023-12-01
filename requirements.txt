@@ -51,5 +51,4 @@ langchain[docarray]
 
 
 deep-translator
-en-core-web-lg
 skillNer
