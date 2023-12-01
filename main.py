@@ -28,6 +28,15 @@ import ast
 import os
 from langchain.vectorstores import Chroma
 from resume_parser import resumeparse
+import spacy
+from spacy.matcher import PhraseMatcher
+
+# load default skills data base
+from skillNer.general_params import SKILL_DB
+# import skill extractor
+from skillNer.skill_extractor_class import SkillExtractor
+
+from deep_translator import GoogleTranslator
 
 
 app = FastAPI()
@@ -52,6 +61,9 @@ class MatchUniandinoRequest(BaseModel):
     focusInvestment: str
     locationInvestment: str
 
+class ExtractSkillsRequest(BaseModel):
+    spanish_text: str
+
 class ChatGPTRequest(BaseModel):
     id_user: str
     role: str
@@ -60,7 +72,12 @@ class ChatGPTRequest(BaseModel):
 class ParseVacanteRequest(BaseModel):
     descripcion_vacante: str
 
-spacy.load('en_core_web_sm')
+nlp = spacy.load('en_core_web_sm')
+
+# init skill extractor
+skill_extractor = SkillExtractor(nlp, SKILL_DB, PhraseMatcher)
+traductor_es_en = GoogleTranslator(source='es', target='en')
+traductor_en_es = GoogleTranslator(source='en', target='es')
 
 @app.post("/parse_resume")
 async def parse_resume(file: UploadFile = File(...)):
@@ -649,6 +666,24 @@ def get_match_emprendedor(request: MatchUniandinoRequest):
     matches['emprendedores'] = matches_emprendedores
     matches['inversionistas'] = matches_inversionistas
     return matches
+
+@app.post('/extract_skills')
+def post_extract_skills(request: ExtractSkillsRequest):
+    spanish_text = request.spanish_text
+    dict_skills = {'Soft Skill':[], 'Hard Skill':[]}
+    english_text = traductor_es_en.translate(spanish_text)
+    response = skill_extractor.annotate(english_text)
+    results = response['results']
+
+    for key, value in results.items():
+        for item in value:
+            dict_skills[SKILL_DB[item["skill_id"]]["skill_type"]].append(item['doc_node_value'])
+
+    for key, value in dict_skills.items():
+        dict_skills[key] = [traductor_en_es.translate(skill) for skill in list(set(value))]
+
+    return dict_skills
+
 
 @app.on_event("startup")
 def startup():
