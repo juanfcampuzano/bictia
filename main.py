@@ -669,9 +669,22 @@ def get_match_emprendedor(request: MatchUniandinoRequest):
 
 @app.post('/extract_skills')
 def post_extract_skills(request: ExtractSkillsRequest):
+
+    def traducir_es_en(spanish_text):
+        try:
+            traductor_es_en.translate(spanish_text)
+        except:
+            return spanish_text
+
+    def traducir_en_es(english_text):
+        try:
+            traductor_en_es.translate(english_text)
+        except:
+            return english_text
+
     spanish_text = request.spanish_text
     dict_skills = {'Soft Skill':[], 'Hard Skill':[]}
-    english_text = traductor_es_en.translate(spanish_text)
+    english_text = traducir_es_en(spanish_text)
     response = skill_extractor.annotate(english_text)
     results = response['results']
 
@@ -680,7 +693,8 @@ def post_extract_skills(request: ExtractSkillsRequest):
             dict_skills[SKILL_DB[item["skill_id"]]["skill_type"]].append(item['doc_node_value'])
 
     for key, value in dict_skills.items():
-        dict_skills[key] = [traductor_en_es.translate(skill) for skill in list(set(value))]
+
+        dict_skills[key] = [traducir_en_es(skill) for skill in list(set(value))]
 
     return dict_skills
 
