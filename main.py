@@ -672,13 +672,13 @@ def post_extract_skills(request: ExtractSkillsRequest):
 
     def traducir_es_en(spanish_text):
         try:
-            traductor_es_en.translate(spanish_text)
+            return traductor_es_en.translate(spanish_text)
         except:
             return spanish_text
 
     def traducir_en_es(english_text):
         try:
-            traductor_en_es.translate(english_text)
+            return traductor_en_es.translate(english_text)
         except:
             return english_text
 
