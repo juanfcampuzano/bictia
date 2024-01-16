@@ -252,7 +252,7 @@ def nueva_ruta_educativa(role: str):
                     "Teamwork": ["Working with others", "Collaborating on projects"]
                 }
                 }"""},
-                {"role": "user", "content": "Please design for me a curriculum for being a " +carreer+". Provide it in a json format"}
+                {"role": "user", "content": "Please design for me a curriculum in spanish for being a " +carreer+". Provide it in a json format"}
             ]
             )
 
