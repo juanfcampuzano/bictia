@@ -282,7 +282,7 @@ def nueva_ruta_educativa(role: str):
                         subseccion_actual = subseccion
                     if type(subseccion_actual) == str:
                         row = {}
-                        videosSearch = VideosSearch(subseccion, limit = 1)
+                        videosSearch = VideosSearch(subseccion + ' en español', limit = 1)
                         result = videosSearch.result()['result'][0]
                         row['id'] = 1
                         row['url'] = result['link']
