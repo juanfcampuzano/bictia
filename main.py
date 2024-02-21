@@ -30,7 +30,7 @@ from langchain.vectorstores import Chroma
 from resume_parser import resumeparse
 import spacy
 from spacy.matcher import PhraseMatcher
-from langchain_community.document_loaders.csv_loader import CSVLoader
+from langchain.document_loaders import CSVLoader
 
 # load default skills data base
 from skillNer.general_params import SKILL_DB
@@ -436,12 +436,9 @@ def get_ruta_educativa(user_id: str):
 
 
 def ruta_educativa_bbits(role: str):
-    loader = CSVLoader(file_path='/docs_bbits/Cursos.csv', csv_args={
-    'delimiter': ';',
-    'quotechar': '"',
-    })
-
+    loader = CSVLoader("docs_bbits/Cursos.csv")
     docs = loader.load()
+
     embeddings = OpenAIEmbeddings()
     db = DocArrayInMemorySearch.from_documents(
     docs, 

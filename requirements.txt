@@ -48,7 +48,6 @@ pydantic
 pyresparser
 tiktoken==0.4.0
 langchain[docarray]
-langchain-community
 
 
 deep-translator
