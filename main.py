@@ -443,26 +443,15 @@ def ruta_educativa_bbits(role: str):
         # Iterate through 'pages'
         for curso in data:
             id = curso['id']
-            precio = curso['precio']
-            duracion = curso['duracion']
-            categoria = curso['categoria']
             titulo = curso['titulo']
-            contenido = curso['contenido']
+            descripcion = curso['descripcion']
             metadata={"id":id}
-            url = 'https://www.bbits.es/cursos/'+str(id)
-
-            # Process snippets for each page
-            contenidos_temas = []
-            titulos_temas = []
-            for tema in contenido:
-                titulo_tema = tema['titulo']
-                contenido_tema = tema['contenido']
-
-                contenidos_temas.append(contenido_tema)
-                titulos_temas.append(titulo_tema)
+            url = curso['url']
 
 
-            docs.append(Document(page_content= 'id: ' + str(id) + ' titulo: ' + titulo + 'url: ' + url +' categoria: ' + categoria + ' ' + ' contenidos ' +  ' '.join(titulos_temas) + ' ' + ' '.join(contenido_tema), metadata=metadata))
+
+
+            docs.append(Document(page_content= 'id: ' + str(id) + ' titulo: ' + titulo + 'url: ' + url + ' ' + ' contenidos: ' +  descripcion, metadata=metadata))
         return docs 
     
     docs = loadJSONFile(open('docs_bbits/Cursos.json', 'rb'))
