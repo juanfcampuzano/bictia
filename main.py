@@ -30,6 +30,7 @@ from langchain.vectorstores import Chroma
 from resume_parser import resumeparse
 import spacy
 from spacy.matcher import PhraseMatcher
+from langchain_community.document_loaders.csv_loader import CSVLoader
 
 # load default skills data base
 from skillNer.general_params import SKILL_DB
@@ -435,26 +436,12 @@ def get_ruta_educativa(user_id: str):
 
 
 def ruta_educativa_bbits(role: str):
-    def loadJSONFile(file):
-        docs=[]
-        # Load JSON file
-        data = json.load(file)
+    loader = CSVLoader(file_path='/docs_bbits/Cursos.csv', csv_args={
+    'delimiter': ';',
+    'quotechar': '"',
+    })
 
-        # Iterate through 'pages'
-        for curso in data:
-            id = curso['id']
-            titulo = curso['titulo']
-            descripcion = curso['descripcion']
-            metadata={"id":id}
-            url = curso['url']
-
-
-
-
-            docs.append(Document(page_content= 'id: ' + str(id) + ' titulo: ' + titulo + 'url: ' + url + ' ' + ' contenidos: ' +  descripcion, metadata=metadata))
-        return docs 
-    
-    docs = loadJSONFile(open('docs_bbits/Cursos.json', 'rb'))
+    docs = loader.load()
     embeddings = OpenAIEmbeddings()
     db = DocArrayInMemorySearch.from_documents(
     docs, 
