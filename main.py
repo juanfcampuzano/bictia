@@ -461,6 +461,7 @@ def ruta_educativa_bbits(role: str):
 
     review_template = """\
     Para el siguiente texto que está en formato markdown y contiene información de varios cursos, extrae la siguiente información para cada curso:
+    No inventes cursos nuevos si no tienes en el texto.
 
     id: ¿Cuál es el id del curso? \
     Si esta información no se encuentra, el valor debe ser -1.
