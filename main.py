@@ -488,8 +488,18 @@ def ruta_educativa_bbits(role: str):
     formated_response = llm(messages)
 
     print('RESPUESTA FORMATEADA')
+    
     print(formated_response.content)
-    respuesta = ast.literal_eval(formated_response.content)
+
+    def eliminar_lineas_con_patron(cadena, patron="```"):
+        lineas = cadena.split('\n')  # Dividir la cadena en líneas
+        lineas_filtradas = [linea for linea in lineas if patron not in linea]  # Filtrar las líneas que no contienen el patrón
+        return '\n'.join(lineas_filtradas)  # Unir las líneas filtradas de nuevo en una cadena
+
+    print('RESPUESTA ARREGLADA')
+    print(eliminar_lineas_con_patron(formated_response.content))
+    
+    respuesta = ast.literal_eval(eliminar_lineas_con_patron(formated_response.content))
 
 
     return respuesta
