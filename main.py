@@ -456,7 +456,7 @@ def ruta_educativa_bbits(role: str):
 
     role = str(role).replace('_', ' ')
 
-    query =  f"Listame todos los cursos que me orientarán a ser un {role} si no tienes cursos aropiados no inventes respuestas, solo retorna un punto. En caso de que hayan cursos para ser {role}, tienes que incluir el titulo, URL\
+    query =  f"Listame solo los cursos que me orientarán a ser un {role} si no tienes cursos aropiados no inventes respuestas, solo retorna un punto. En caso de que hayan cursos para ser {role}, tienes que incluir el titulo, URL\
     en markdown y resume cada uno."
 
     response = qa_stuff.run(query)
@@ -498,8 +498,8 @@ def ruta_educativa_bbits(role: str):
     
     respuesta = ast.literal_eval(eliminar_lineas_con_patron(formated_response.content))
 
-    print(respuesta)
-    respuesta_filtrada = {"ruta":[dicti for dicti in respuesta['ruta'] if str(dicti['url']).find('example') == -1 and str(dicti['url']).find('.com') != -1]}
+
+    respuesta_filtrada = [dicti for dicti in respuesta if str(dicti['url']).find('example') == -1 and str(dicti['url']).find('.com') != -1]
 
     return respuesta_filtrada
 
