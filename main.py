@@ -439,6 +439,9 @@ def ruta_educativa_bbits(role: str):
     loader = CSVLoader("docs_bbits/Cursos.csv")
     docs = loader.load()
 
+    print('ROL')
+    print(role)
+
     embeddings = OpenAIEmbeddings()
     db = DocArrayInMemorySearch.from_documents(
     docs, 
@@ -456,7 +459,7 @@ def ruta_educativa_bbits(role: str):
 
     role = str(role).replace('_', ' ')
 
-    query =  f"Listame solo los cursos que me orientarán a ser un {role} si no tienes cursos aropiados no inventes respuestas, solo retorna un punto. En caso de que hayan cursos para ser {role}, tienes que incluir el titulo, URL\
+    query =  f"Listame solo los cursos que me orientarán a tener las habilidades para ser un {role}, no tiene que ser específicamente para ser {role}, pero ser muy relacionados, si no tienes cursos aropiados no inventes respuestas, solo retorna un punto. En caso de que hayan cursos para ser {role}, tienes que incluir el titulo, URL\
     en markdown y resume cada uno."
 
     response = qa_stuff.run(query)
