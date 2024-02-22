@@ -454,8 +454,8 @@ def ruta_educativa_bbits(role: str):
     verbose=True
     )
 
-    query =  f"Listame todos los cursos que me orientarán a ser un {role} si no tienes cursos aropiados no inventes respuestas, solo di que no sabes. Tienes que incluir el titulo, URL y el id del curso\
-    en markdown y resume cada uno. No me des cursos que no sirvan para ser un {role}, si no tienes cursos única y solamente debes retornar esto []."
+    query =  f"Listame todos los cursos que me orientarán a ser un {role} si no tienes cursos aropiados no inventes respuestas, solo retorna un punto. En caso de que hayan cursos para ser {role}, tienes que incluir el titulo, URL y el id del curso\
+    en markdown y resume cada uno. No me des cursos que no sirvan para ser un {role}."
 
     response = qa_stuff.run(query)
 
