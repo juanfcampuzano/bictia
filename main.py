@@ -487,6 +487,8 @@ def ruta_educativa_bbits(role: str):
     messages = prompt_template.format_messages(text=response)
     formated_response = llm(messages)
 
+    print('RESPUESTA FORMATEADA')
+    print(formated_response.content)
     respuesta = ast.literal_eval(formated_response.content)
 
 
