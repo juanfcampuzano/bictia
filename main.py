@@ -499,7 +499,7 @@ def ruta_educativa_bbits(role: str):
     respuesta = ast.literal_eval(eliminar_lineas_con_patron(formated_response.content))
 
 
-    respuesta_filtrada = [dicti for dicti in respuesta if str(dicti['url']).find('example') == -1 and str(dicti['url']).find('.com') != -1]
+    respuesta_filtrada = [dicti for dicti in respuesta if str(dicti['url']).find('example') == -1 and (str(dicti['url']).find('.com') != -1 or str(dicti['url']).find('.org') != -1)]
 
     return respuesta_filtrada
 
