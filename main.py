@@ -460,8 +460,8 @@ def ruta_educativa_bbits(role: str):
 
     role = str(role).replace('_', ' ')
 
-    query =  f"Listame solo los cursos que me orientarán a tener las habilidades para ser un {role}, revisa cada uno de estos cursos y pregúntate ¿esto esta relacionado a {role}? si tu respuesta es afirmativa, dejalo, si no, eliminalo. No tiene que ser específicamente para ser {role}, pero ser muy relacionados, si no tienes cursos aropiados no inventes respuestas, solo retorna un punto. En caso de que hayan cursos para ser {role}, tienes que incluir el titulo, URL\
-    en markdown y resume cada uno. Intenta proporcionar minimo 6 cursos relacionados solo de ser posible. "
+    query =  f"Listame solo los cursos que me orientarán a tener las habilidades para ser un {role}, revisa cada uno de estos cursos y pregúntate ¿esto esta relacionado a {role}? si tu respuesta es afirmativa, dejalo, si no, eliminalo. Si no tienes cursos aropiados no inventes respuestas, solo retorna un punto. En caso de que hayan cursos para ser {role}, tienes que incluir el titulo, URL\
+    en markdown y resume cada uno. Intenta proporcionar minimo 6 cursos relacionados solo de ser posible, pero solo cursos directamente relacionados a {role}. "
 
     response = qa_stuff.run(query)
 
