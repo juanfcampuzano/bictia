@@ -454,6 +454,8 @@ def ruta_educativa_bbits(role: str):
     verbose=True
     )
 
+    role = str(role).replace('_', ' ')
+
     query =  f"Listame todos los cursos que me orientarán a ser un {role} si no tienes cursos aropiados no inventes respuestas, solo retorna un punto. En caso de que hayan cursos para ser {role}, tienes que incluir el titulo, URL\
     en markdown y resume cada uno."
 
