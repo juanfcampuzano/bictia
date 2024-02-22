@@ -436,7 +436,7 @@ def get_ruta_educativa(user_id: str):
 
 
 def ruta_educativa_bbits(role: str):
-    loader = CSVLoader("docs_bbits/Cursos.csv", encoding='latin-1', fieldnames = ["id","titulo","descripcion","url"])
+    loader = CSVLoader("docs_bbits/Cursos.csv")
     docs = loader.load()
 
     embeddings = OpenAIEmbeddings()
