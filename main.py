@@ -454,17 +454,14 @@ def ruta_educativa_bbits(role: str):
     verbose=True
     )
 
-    query =  f"Listame todos los cursos que me orientarán a ser un {role} si no tienes cursos aropiados no inventes respuestas, solo retorna un punto. En caso de que hayan cursos para ser {role}, tienes que incluir el titulo, URL y el id del curso\
-    en markdown y resume cada uno. No me des cursos que no sirvan para ser un {role}."
+    query =  f"Listame todos los cursos que me orientarán a ser un {role} si no tienes cursos aropiados no inventes respuestas, solo retorna un punto. En caso de que hayan cursos para ser {role}, tienes que incluir el titulo, URL\
+    en markdown y resume cada uno."
 
     response = qa_stuff.run(query)
 
     review_template = """\
     Para el siguiente texto que está en formato markdown y contiene información de varios cursos, extrae la siguiente información para cada curso:
     No inventes cursos nuevos si no tienes en el texto.
-
-    id: ¿Cuál es el id del curso? \
-    Si esta información no se encuentra, el valor debe ser -1.
 
     url: ¿Cuál es el link al curso? \
     Si esta información no se encuentra, el valor debe ser -1.
@@ -476,7 +473,6 @@ def ruta_educativa_bbits(role: str):
     Si esta información no se encuentra, el valor debe ser -1.
 
     Formatea la salida como lista de JSON con las siguientes claves para cada curso:
-    id
     url
     titulo
     descripcion
@@ -499,6 +495,7 @@ def ruta_educativa_bbits(role: str):
 
     
     respuesta = ast.literal_eval(eliminar_lineas_con_patron(formated_response.content))
+
 
 
     return respuesta
