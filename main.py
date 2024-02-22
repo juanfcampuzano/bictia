@@ -188,7 +188,8 @@ async def save_chatgpt_query(request: ChatGPTRequest, background_tasks: Backgrou
             chatgpt_responses = load_from_local('chatgpt_responses')
             temp_dict = {}
 
-            reemplazos = {'cto': 'gerente de tecnología y programación', 'ceo': 'gerente ejecutivo general', 'cfo': 'gerente de finanzas', 'cgo': 'gerente de crecimiento, relaciones y ventas'}
+            # reemplazos = {'cto': 'gerente de tecnología y programación', 'ceo': 'gerente ejecutivo general', 'cfo': 'gerente de finanzas', 'cgo': 'gerente de crecimiento, relaciones y ventas'}
+            reemplazos = {}
             role = role.lower()
             for key, value in reemplazos.items():
                 role = role.replace(key, value)
