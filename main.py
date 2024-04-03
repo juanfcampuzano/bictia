@@ -431,7 +431,7 @@ def get_ruta_educativa(user_id: str):
             return rutas_educativas[user_id]
             break
         except Exception as e:
-            print(e)
+            return{"message":e}
             tries += 1
             continue
     return{"message":e}
