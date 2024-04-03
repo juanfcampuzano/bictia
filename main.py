@@ -424,6 +424,7 @@ def post_ruta_educativa(role: str):
 @app.get("/ruta_educativa/{user_id}")
 def get_ruta_educativa(user_id: str):
     tries = 0
+    e = ''
     while tries < 5:
         try:
             rutas_educativas = pkl.load(open('/app/pkl-data/rutas_educativas.pkl','rb'))
@@ -433,7 +434,7 @@ def get_ruta_educativa(user_id: str):
             print(e)
             tries += 1
             continue
-    return{"message":"error"}
+    return{"message":e}
 
 
 def ruta_educativa_bbits(role: str):
