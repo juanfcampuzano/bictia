@@ -424,12 +424,10 @@ def post_ruta_educativa(role: str):
 @app.get("/ruta_educativa/{user_id}")
 def get_ruta_educativa(user_id: str):
     tries = 0
-    e = ''
     while tries < 5:
         try:
-            rutas_educativas = pkl.load(open('/app/pkl-data/rutas_educativas.pkl','rb'))
+            rutas_educativas = pkl.load(open('/app/pkl-data/rutas_educativas_bictia.pkl','rb'))
             return rutas_educativas[user_id]
-            break
         except Exception as e:
             return{"message":e}
             tries += 1
